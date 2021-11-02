@@ -16,4 +16,8 @@ public abstract class GameObjects {
         this.position.add(posX);
         this.position.add(posY);
     }
+
+    public String getName(){
+        return name;
+    }
 }

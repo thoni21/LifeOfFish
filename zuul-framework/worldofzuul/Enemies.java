@@ -8,11 +8,12 @@ public class Enemies extends GameObjects{
         this.speed = speed;
     }
 
-    public String getName(){
-        return this.name;
-    }
-
     public void movement(){
 
+    }
+
+    @Override
+    public String toString(){
+        return "Enemy: " + getName() + "    You must avoid " + getName() + "at all costs!";
     }
 }
