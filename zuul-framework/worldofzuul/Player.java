@@ -39,4 +39,10 @@ public class Player extends GameObjects{
     public void death(){
 
     }
+
+    @Override
+    public String toString(){
+        return "Current score: " + getScore() + "    Current turn: " + getTurns() + "    Your current pollution level: " +getPollutionLevel();
+    }
+
 }
