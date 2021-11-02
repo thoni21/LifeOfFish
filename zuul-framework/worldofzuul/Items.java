@@ -1,14 +1,12 @@
 package worldofzuul;
 
-public abstract class Items {
-    String name;
-    int turnValue;
+
+public abstract class Items extends GameObjects {
     double pollutionValue;
     ItemType type;
 
     public Items(String name, int turnValue, double pollutionValue, ItemType type){
-        this.name = name;
-        this.turnValue = turnValue;
+        super(name, turnValue);
         this.pollutionValue = pollutionValue;
         this.type = type;
     }
