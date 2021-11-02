@@ -1,11 +1,10 @@
 package worldofzuul;
 
-public class Enemies {
-    String name;
+public class Enemies extends GameObjects{
     int speed;
 
-    public Enemies(String name, int speed){
-        this.name = name;
+    public Enemies(String name,int turnValue, int speed){
+        super(name, turnValue);
         this.speed = speed;
     }
 

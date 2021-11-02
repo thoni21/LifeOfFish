@@ -1,17 +1,19 @@
 package worldofzuul;
 
-public class Player {
+public class Player extends GameObjects{
     double score;
-    int turns;
     int speed;
     double pollutionLevel;
 
-    public Player(double score, int turns, int speed, double pollutionLevel){
-
+    public Player(String name, double score, int turnValue, int speed, double pollutionLevel){
+        super(name,turnValue);
+        this.speed = speed;
+        this.score = score;
+        this.pollutionLevel = score;
     }
 
     public int getTurns(){
-        return this.turns;
+        return this.turnValue;
     }
 
     public double getScore(){
@@ -19,11 +21,11 @@ public class Player {
     }
 
     public void addTurns(int gain){
-        this.turns += gain;
+        this.turnValue += gain;
     }
 
     public void removeTurns(int loss){
-        this.turns -= loss;
+        this.turnValue -= loss;
     }
 
     public double getPollutionLevel() {
