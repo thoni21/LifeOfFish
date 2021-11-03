@@ -42,7 +42,9 @@ public class Player extends GameObjects{
 
     @Override
     public String toString(){
-        return "Current score: " + getScore() + "    Current turn: " + getTurns() + "    Your current pollution level: " +getPollutionLevel();
+        return "Name: " + getName() + "    Current score: " + getScore() +
+                "    Current turn: " + getTurns() + "    Your current pollution level: "
+                + getPollutionLevel();
     }
 
 }

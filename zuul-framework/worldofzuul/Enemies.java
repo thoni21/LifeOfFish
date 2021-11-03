@@ -14,6 +14,6 @@ public class Enemies extends GameObjects{
 
     @Override
     public String toString(){
-        return "Enemy: " + getName() + "    You must avoid " + getName() + "at all costs!";
+        return "Enemy: " + getName() + "    You must avoid " + getName() + " at all costs!";
     }
 }
