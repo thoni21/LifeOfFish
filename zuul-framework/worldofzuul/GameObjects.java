@@ -9,7 +9,6 @@ public abstract class GameObjects {
         this.turnValue = turnValue;
     }
     public GameObjects(){
-
     }
 
     public String getName(){
