@@ -3,8 +3,8 @@ package worldofzuul;
 public class Enemies extends GameObjects{
     int speed;
 
-    public Enemies(String name,int turnValue, int speed){
-        super(name, turnValue);
+    public Enemies(String name,int turnValue, int speed,String symbol){
+        super(name, turnValue, symbol);
         this.speed = speed;
     }
 
@@ -14,6 +14,6 @@ public class Enemies extends GameObjects{
 
     @Override
     public String toString(){
-        return "Enemy: " + getName() + "    You must avoid " + getName() + "at all costs!";
+        return "Enemy: " + getName() + "    You must avoid " + getName() + " at all costs!";
     }
 }

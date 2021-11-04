@@ -5,8 +5,8 @@ public class Player extends GameObjects{
     int speed;
     double pollutionLevel;
 
-    public Player(String name, double score, int turnValue, int speed, double pollutionLevel){
-        super(name,turnValue);
+    public Player(String name, double score, int turnValue, int speed, double pollutionLevel, String symbol){
+        super(name,turnValue,symbol);
         this.speed = speed;
         this.score = score;
         this.pollutionLevel = score;
@@ -42,7 +42,9 @@ public class Player extends GameObjects{
 
     @Override
     public String toString(){
-        return "Current score: " + getScore() + "    Current turn: " + getTurns() + "    Your current pollution level: " +getPollutionLevel();
+        return "Name: " + getName() + "    Current score: " + getScore() +
+                "    Current turn: " + getTurns() + "    Your current pollution level: "
+                + getPollutionLevel();
     }
 
 }
