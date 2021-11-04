@@ -59,6 +59,7 @@ public class Game
         int totalQuantity = playerQuantity+enemiesQuantity+
                 foodQuantity+obstaclesQuantity;
 
+
         //a number that shows where en the Array there's room
         int placeCounter = 0;
 
@@ -66,22 +67,23 @@ public class Game
         GameObjects[] objectList = new GameObjects[totalQuantity];
 
         //creating the player
-        objectList[placeCounter] = new Player("Tuna",0.0,20,1,0.0);
+        objectList[placeCounter] = new Player("Tuna",0.0,20,1,0.0,"\uD83D\uDC1F");
         placeCounter++;
+
 
         //loop that creates enemies and places them in the array
         for(int i = 0; i < enemiesQuantity; i++){
-            objectList[placeCounter] = new Enemies("Shark",-100,1);
+            objectList[placeCounter] = new Enemies("Shark",-100,1,"\uD83D\uDC0A");
             placeCounter++;
         }
         //loop that creates food and places them in the array
         for(int i = 0; i < foodQuantity; i++){
-            objectList[placeCounter] = new Food("Crab",placeCounter,3.2);
+            objectList[placeCounter] = new Food("Crab",placeCounter,3.2,"\uD83E\uDD80");
             placeCounter++;
         }
         //loop that creates obstacles and places them in the array
         for(int i = 0; i < obstaclesQuantity; i++){
-            objectList[placeCounter] = new Obstacles("Hard plastic",-i,i+2);
+            objectList[placeCounter] = new Obstacles("Hard plastic",-i,i+2,"O");
             placeCounter++;
         }
 
@@ -114,10 +116,11 @@ public class Game
         //prints its out
         for (int y=0 ; y<grid.length ; y++) {
             for (int x=0 ; x< grid[y].length ; x++) {
-                System.out.print(" "+grid[x][y].getName()+" ");
+                System.out.print(" "+grid[x][y].getSymbol()+" ");
             }
             System.out.println("");
         }
+
     }
 
     public void play() 

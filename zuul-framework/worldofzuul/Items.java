@@ -5,8 +5,8 @@ public abstract class Items extends GameObjects {
     double pollutionValue;
     ItemType type;
 
-    public Items(String name, int turnValue, double pollutionValue, ItemType type){
-        super(name, turnValue);
+    public Items(String name, int turnValue, double pollutionValue, ItemType type,String symbol){
+        super(name, turnValue,symbol);
         this.pollutionValue = pollutionValue;
         this.type = type;
     }
