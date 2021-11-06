@@ -57,6 +57,7 @@ public class Game
         printWelcome();
         Grid grid = new Grid(9,9,1,7,8);
         grid.createGrid();
+        grid.printGrid();
 
 
         boolean finished = false;

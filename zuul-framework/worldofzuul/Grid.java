@@ -94,6 +94,22 @@ public class Grid {
         }
     }
 
+    private ArrayList<Integer> getPosition(GameObjects entity){
+
+        ArrayList<Integer> position = new ArrayList<>();
+
+        for (int y = 0; y < this.row; y++) {
+            for (int x = 0; x < this.column; x++) {
+                if (this.grid[y][x] == entity) {
+                    position.add(x);
+                    position.add(y);
+                }
+            }
+        }
+
+        return position;
+    }
+
     private boolean positionCheck(GameObjects entity, int positionCode) {
         // 1 = upper side, 2 = Right side, 3 = lower side, 4 = left side and 5 = the middle
 
@@ -144,7 +160,7 @@ public class Grid {
 
     }
 
-        private boolean legalMove(GameObjects entity, Command direction){
+        private boolean isLegalMove(GameObjects entity, Command direction){
         //boolean that's gets manipulated and returned
         boolean isLegalMove = false;
 
@@ -200,4 +216,34 @@ public class Grid {
             }
             return isLegalMove;
         }
+
+        public void gridMovement(GameObjects entity, Command direction) throws IllegalMoveException {
+
+        if(!isLegalMove(entity,direction)){
+            throw new IllegalMoveException("this is a illegal move, try something else.");
+        }
+
+        int x = 0;
+        int y = 0;
+
+        if(direction.getSecondWord().equals("Right")){
+            x = 1;
+        } else if(direction.getSecondWord().equals("Left")){
+            x = -1;
+        } else if(direction.getSecondWord().equals("Up")){
+            y = 1;
+        } else if(direction.getSecondWord().equals("Down")){
+            y = -1;
+        }
+
+        ArrayList<Integer> entityPosition = getPosition(entity);
+
+        GameObjects placeholder = this.grid[entityPosition.get(0)+y][entityPosition.get(1)+x];
+
+        this.grid[entityPosition.get(0)+y][entityPosition.get(1)+x] = entity;
+
+        this.grid[entityPosition.get(0)][entityPosition.get(1)] = new Water();
+
+        }
+
     }
