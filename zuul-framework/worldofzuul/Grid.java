@@ -19,9 +19,10 @@ public class Grid {
         this.enemiesQuantity = enemiesQuantity;
         this.foodQuantity = foodQuantity;
         this.obstaclesQuantity = obstaclesQuantity;
+        createGrid();
     }
 
-    public void createGrid() {
+    private void createGrid() {
 
         //a list of the quantity of different entities
         int totalQuantity = playerQuantity + enemiesQuantity +
@@ -35,13 +36,14 @@ public class Grid {
         GameObjects[] objectList = new GameObjects[totalQuantity];
 
         //creating the player
-        objectList[placeCounter] = new Player("Tuna", 0.0, 20, 1, 0.0, "\uD83D\uDC1F");
+        objectList[placeCounter] = new Player("Tuna", 0.0, 20, 1,
+                0.0, "+");
         placeCounter++;
 
 
         //loop that creates enemies and places them in the array
         for (int i = 0; i < enemiesQuantity; i++) {
-            objectList[placeCounter] = new Enemies("Shark", -100, 1, "☠");
+            objectList[placeCounter] = new Enemies("Shark", -100, 1, "*");
             placeCounter++;
         }
         //loop that creates food and places them in the array
@@ -76,7 +78,7 @@ public class Grid {
         int count = 0;
         for (int i = 0; i < column; i++) {
             for (int j = 0; j < row; j++) {
-                grid[j][i] = gridCopy.get(count);
+                grid[i][j] = gridCopy.get(count);
                 count++;
             }
         }
@@ -86,28 +88,48 @@ public class Grid {
     }
 
     public void printGrid() {
-        for (int column = 0; column < this.grid.length; column++) {
-            for (int row = 0; row < this.grid[column].length; row++) {
-                System.out.print(" " + this.grid[column][row].getSymbol() + " ");
+        for (int row = 0; row < this.grid.length; row++) {
+            for (int column = 0; column < this.grid[row].length; column++) {
+                System.out.print(" " + this.grid[row][column].getSymbol() + " ");
             }
             System.out.println("");
         }
     }
 
-    private ArrayList<Integer> getPosition(GameObjects entity){
+    public ArrayList<Integer> getPosition(GameObjects entity) {
 
+        //list that's going to get returned
         ArrayList<Integer> position = new ArrayList<>();
 
-        for (int y = 0; y < this.row; y++) {
-            for (int x = 0; x < this.column; x++) {
-                if (this.grid[y][x] == entity) {
+        //checks all positions in the 2D array for the entity
+        for (int x = 0; x < this.row; x++) {
+            for (int y = 0; y < this.column; y++) {
+                if (this.grid[x][y] == entity) {
                     position.add(x);
                     position.add(y);
+                    break;
                 }
             }
         }
-
         return position;
+    }
+
+    public GameObjects findPlayer() {
+
+        //list that's going to get returned
+        ArrayList<Integer> position = new ArrayList<>();
+
+        //checks all positions in the 2D array for the player
+        for (int x = 0; x < this.row; x++) {
+            for (int y = 0; y < this.column; y++) {
+                if (this.grid[x][y] instanceof Player) {
+                    position.add(x);
+                    position.add(y);
+                    break;
+                }
+            }
+        }
+        return this.grid[position.get(0)][position.get(1)];
     }
 
     private boolean positionCheck(GameObjects entity, int positionCode) {
@@ -120,28 +142,28 @@ public class Grid {
         switch (positionCode) {
             case 1:
                 for (int i = 1; i < this.row - 1; i++) {
-                    if (this.grid[0][i] == entity) {
+                    if (this.grid[i][0] == entity) {
                         checker = true;
                         break;
                     }
                 }
             case 2:
                 for (int i = 1; i < this.column - 1; i++) {
-                    if (this.grid[i][this.row] == entity) {
+                    if (this.grid[this.row-1][i] == entity) {
                         checker = true;
                         break;
                     }
                 }
             case 3:
                 for (int i = 1; i < this.row - 1; i++) {
-                    if (this.grid[this.column][i] == entity) {
+                    if (this.grid[i][this.column-1] == entity) {
                         checker = true;
                         break;
                     }
                 }
             case 4:
                 for (int i = 1; i < this.row - 1; i++) {
-                    if (this.grid[i][0] == entity) {
+                    if (this.grid[0][i] == entity) {
                         checker = true;
                         break;
                     }
@@ -160,90 +182,137 @@ public class Grid {
 
     }
 
-        private boolean isLegalMove(GameObjects entity, Command direction){
+    private boolean isLegalMove(GameObjects entity, Command direction) {
         //boolean that's gets manipulated and returned
         boolean isLegalMove = false;
 
         //9 different if-else statements that cover each position and available move options
-            //checks if the player stands up in the left corner, and that's he inputs the right second word
-            if (this.grid[0][0] == entity && (direction.getSecondWord().equals("Right") ||
-                    direction.getSecondWord().equals("Down"))) {
-                isLegalMove = true;
-            }
-            //checks if the player stands up in the right corner, and that's he inputs the right second word
-            else if (this.grid[this.row][0] == entity && (direction.getSecondWord().equals("Left") ||
-                    direction.getSecondWord().equals("Down"))) {
-                isLegalMove = true;
-            }
-            //checks if the player stands in the bottom left corner, and that's he inputs the right second word
-            else if (this.grid[0][this.column] == entity && (direction.getSecondWord().equals("Right") ||
-                    direction.getSecondWord().equals("Up"))) {
-                isLegalMove = true;
-            }
-            //checks if the player stands in the bottom right corner, and that's he inputs the right second word
-            else if (this.grid[this.row][this.column] == entity && (direction.getSecondWord().equals("Left") ||
-                    direction.getSecondWord().equals("Up"))) {
-                isLegalMove = true;
-            }
-            //with help from the method positionCheck it checks if the player is on the upper side of the map
-            // and that's he inputs the right second word
-            else if (positionCheck(entity, 1) && (direction.getSecondWord().equals("Right") ||
-                    direction.getSecondWord().equals("Left") || direction.getSecondWord().equals("Down"))) {
-                isLegalMove = true;
-            }
-            //with help from the method positionCheck it checks if the player is on the right side of the map
-            // and that's he inputs the right second word
-            else if (positionCheck(entity, 2) && (direction.getSecondWord().equals("Up") ||
-                    direction.getSecondWord().equals("Left") || direction.getSecondWord().equals("Down"))) {
-                isLegalMove = true;
-            }
-            //with help from the method positionCheck it checks if the player is on the lower side of the map
-            // and that's he inputs the right second word
-            else if (positionCheck(entity, 3) && (direction.getSecondWord().equals("Up") ||
-                    direction.getSecondWord().equals("Left") || direction.getSecondWord().equals("Right"))) {
-                isLegalMove = true;
-            }
-            //with help from the method positionCheck it checks if the player is on the left side of the map
-            // and that's he inputs the right second word
-            else if (positionCheck(entity, 4) && (direction.getSecondWord().equals("Up") ||
-                    direction.getSecondWord().equals("Down") || direction.getSecondWord().equals("Right"))) {
-                isLegalMove = true;
-            }
-            //with help from the method positionCheck it checks if the player is in the middle
-            // and that's he inputs the right second word
-            else if(positionCheck(entity, 5)){
-                isLegalMove = true;
-            }
-            return isLegalMove;
+
+        //checks if the player stands up in the left corner, and that's he inputs the right second word
+        if (this.grid[0][0] == entity && (direction.getSecondWord().equals("Right") ||
+                direction.getSecondWord().equals("Down"))) {
+            isLegalMove = true;
         }
+        //checks if the player stands up in the right corner, and that's he inputs the right second word
+        else if (this.grid[this.row-1][0] == entity && (direction.getSecondWord().equals("Left") ||
+                direction.getSecondWord().equals("Down"))) {
+            isLegalMove = true;
+        }
+        //checks if the player stands in the bottom left corner, and that's he inputs the right second word
+        else if (this.grid[0][this.column-1] == entity && (direction.getSecondWord().equals("Right") ||
+                direction.getSecondWord().equals("Up"))) {
+            isLegalMove = true;
+        }
+        //checks if the player stands in the bottom right corner, and that's he inputs the right second word
+        else if (this.grid[this.row-1][this.column-1] == entity && (direction.getSecondWord().equals("Left") ||
+                direction.getSecondWord().equals("Up"))) {
+            isLegalMove = true;
+        }
+        //with help from the method positionCheck it checks if the player is on the upper side of the map
+        // and that's he inputs the right second word
+        else if (positionCheck(entity, 1) && (direction.getSecondWord().equals("Right") ||
+                direction.getSecondWord().equals("Left") || direction.getSecondWord().equals("Down"))) {
+            isLegalMove = true;
+        }
+        //with help from the method positionCheck it checks if the player is on the right side of the map
+        // and that's he inputs the right second word
+        else if (positionCheck(entity, 2) && (direction.getSecondWord().equals("Up") ||
+                direction.getSecondWord().equals("Left") || direction.getSecondWord().equals("Down"))) {
+            isLegalMove = true;
+        }
+        //with help from the method positionCheck it checks if the player is on the lower side of the map
+        // and that's he inputs the right second word
+        else if (positionCheck(entity, 3) && (direction.getSecondWord().equals("Up") ||
+                direction.getSecondWord().equals("Left") || direction.getSecondWord().equals("Right"))) {
+            isLegalMove = true;
+        }
+        //with help from the method positionCheck it checks if the player is on the left side of the map
+        // and that's he inputs the right second word
+        else if (positionCheck(entity, 4) && (direction.getSecondWord().equals("Up") ||
+                direction.getSecondWord().equals("Down") || direction.getSecondWord().equals("Right"))) {
+            isLegalMove = true;
+        }
+        //with help from the method positionCheck it checks if the player is in the middle
+        // and that's he inputs the right second word
+        else if (positionCheck(entity, 5)) {
+            isLegalMove = true;
+        }
+        return isLegalMove;
+    }
 
-        public void gridMovement(GameObjects entity, Command direction) throws IllegalMoveException {
+    public void gridMovement(GameObjects entity, Command direction) throws IllegalMoveException {
 
-        if(!isLegalMove(entity,direction)){
+        //finds out if the action is legal if not it throws an exception
+        if (!isLegalMove(entity, direction)) {
             throw new IllegalMoveException("this is a illegal move, try something else.");
         }
 
+        //2 values that represent where the entity is going
         int x = 0;
         int y = 0;
 
-        if(direction.getSecondWord().equals("Right")){
+        //manipulation of the 2 values according to the action
+        if (direction.getSecondWord().equals("Right")) {
             x = 1;
-        } else if(direction.getSecondWord().equals("Left")){
+        } else if (direction.getSecondWord().equals("Left")) {
             x = -1;
-        } else if(direction.getSecondWord().equals("Up")){
-            y = 1;
-        } else if(direction.getSecondWord().equals("Down")){
+        } else if (direction.getSecondWord().equals("Up")) {
             y = -1;
+        } else if (direction.getSecondWord().equals("Down")) {
+            y = 1;
         }
 
+        //method that finds the entity position in the grid
         ArrayList<Integer> entityPosition = getPosition(entity);
 
-        GameObjects placeholder = this.grid[entityPosition.get(0)+y][entityPosition.get(1)+x];
+        //takes whatever there is on the position the entity is about to go to at stores it
+        GameObjects placeholder = this.grid[entityPosition.get(0) + y][entityPosition.get(1) + x];
 
-        this.grid[entityPosition.get(0)+y][entityPosition.get(1)+x] = entity;
+        //overrides that position with the entity
+        this.grid[entityPosition.get(0) + y][entityPosition.get(1) + x] = entity;
 
+        //places water where original the entity was
         this.grid[entityPosition.get(0)][entityPosition.get(1)] = new Water();
 
-        }
+        //checks if the entity is the player
+        if (entity instanceof Player) {
+            if (placeholder instanceof Food) { //checks if the player collided with a food
+                ((Player) entity).addTurns(placeholder.turnValue);
+                ((Player) entity).addPollutionValue(placeholder.pollutionValue);
 
+                System.out.print("congratulation.");
+                System.out.println("You have eating a " + placeholder.getName() + ".");
+                System.out.println("For this action you will gain a few more turns.");
+                System.out.println("...and maybe something more.");
+            } else if (placeholder instanceof Obstacles) { //checks if the player collided with an obstacle
+                ((Player) entity).addTurns(placeholder.turnValue);
+                ((Player) entity).addPollutionValue(placeholder.pollutionValue);
+
+                System.out.print("Too bad.");
+                System.out.println("You have accidentally eating a " + placeholder.getName() + ".");
+                System.out.println("For this action you will lose a few turns.");
+                System.out.println("...and maybe something more.");
+            } else if (placeholder instanceof Water) { //checks if the player collided with some water
+                ((Player) entity).addPollutionValue(placeholder.pollutionValue);
+
+                System.out.print("There is nothing.");
+                System.out.println("this action will yield you nothing.");
+                System.out.println("... or maybe it will.");
+            } else if (placeholder instanceof Enemies) { //checks if the player collided with an enemy
+                ((Player) entity).triggerDeath();
+
+                System.out.print("Too bad.");
+                System.out.println("You have confronted a " + placeholder.getName() + ".");
+                System.out.println("This action have resulted in your death.");
+            }
+        } else if (entity instanceof Enemies) { //checks if the entity is an enemy
+            if (placeholder instanceof Player) { //checks if the enemy collided with the player
+                ((Player) entity).triggerDeath();
+
+                System.out.print("Too bad.");
+                System.out.println("You have confronted a " + placeholder.getName() + ".");
+                System.out.println("This action have resulted in your death.");
+            }
+        }
     }
+}

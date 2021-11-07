@@ -1,9 +1,9 @@
 package worldofzuul;
 
-public class Obstacles extends Items{
+public class Obstacles extends GameObjects{
 
     public Obstacles(String name, int turnValue, double pollutionValue, String symbol) {
-        super(name, turnValue, pollutionValue, ItemType.OBSTACLE,symbol);
+        super(name, turnValue, symbol, pollutionValue);
     }
 
     @Override

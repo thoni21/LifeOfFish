@@ -13,7 +13,6 @@ public class Game
 
     public Game() 
     {
-
         createRooms();
         parser = new Parser();
     }
@@ -55,15 +54,14 @@ public class Game
     public void play() 
     {            
         printWelcome();
-        Grid grid = new Grid(9,9,1,7,8);
-        grid.createGrid();
-        grid.printGrid();
-
+        Grid game = new Grid(9,9,0,5,2);
+        game.printGrid();
 
         boolean finished = false;
         while (! finished) {
             Command command = parser.getCommand();
-            finished = processCommand(command);
+            finished = processCommand(command, game);
+            game.printGrid();
         }
         System.out.println("Thank you for playing.  Good bye.");
     }
@@ -79,7 +77,7 @@ public class Game
         System.out.println(currentRoom.getLongDescription());
     }
 
-    private boolean processCommand(Command command) 
+    private boolean processCommand(Command command, Grid grid)
     {
         boolean wantToQuit = false;
 
@@ -94,7 +92,7 @@ public class Game
             printHelp();
         }
         else if (commandWord == CommandWord.GO) {
-            goRoom(command);
+            goIngrid(command, grid);
         }
         else if (commandWord == CommandWord.QUIT) {
             wantToQuit = quit(command);
@@ -114,24 +112,19 @@ public class Game
         parser.showCommands();
     }
 
-    private void goRoom(Command command) 
+    private void goIngrid(Command command, Grid grid)
     {
         if(!command.hasSecondWord()) {
             System.out.println("Go where?");
             return;
         }
 
-        String direction = command.getSecondWord();
-
-        Room nextRoom = currentRoom.getExit(direction);
-
-        if (nextRoom == null) {
-            System.out.println("There is no door!");
+        try {
+            grid.gridMovement(grid.findPlayer(),command);
+        } catch (IllegalMoveException e) {
+            e.printStackTrace();
         }
-        else {
-            currentRoom = nextRoom;
-            System.out.println(currentRoom.getLongDescription());
-        }
+
     }
 
     private boolean quit(Command command) 
