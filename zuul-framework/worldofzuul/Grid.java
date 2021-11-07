@@ -38,24 +38,23 @@ public class Grid {
         GameObjects[] objectList = new GameObjects[totalQuantity];
 
         //creating the player
-        objectList[placeCounter] = new Player("Tuna", 0.0, 20, 1,
-                0.0, "+");
+        objectList[placeCounter] = new Player("Tuna", 20, 1, 0.0, "\uD83D\uDC1F");
         placeCounter++;
 
 
         //loop that creates enemies and places them in the array
         for (int i = 0; i < enemiesQuantity; i++) {
-            objectList[placeCounter] = new Enemies("Shark", -100, 1, "*");
+            objectList[placeCounter] = new Enemies("Shark", -100, 1, "\uD83D\uDC19");
             placeCounter++;
         }
         //loop that creates food and places them in the array
         for (int i = 0; i < foodQuantity; i++) {
-            objectList[placeCounter] = new Food("Crab", placeCounter, 3.2, "\uD83E\uDD80");
+            objectList[placeCounter] = new Food("Crab", placeCounter, 3.2, "\uD83E\uDD90");
             placeCounter++;
         }
         //loop that creates obstacles and places them in the array
         for (int i = 0; i < obstaclesQuantity; i++) {
-            objectList[placeCounter] = new Obstacles("Hard plastic", -i, i + 2, "#");
+            objectList[placeCounter] = new Obstacles("Hard plastic", -i, i + 2, "\uD83D\uDDD1");
             placeCounter++;
         }
 
@@ -272,6 +271,9 @@ public class Grid {
         //places water where original the entity was
         this.grid[entityPosition.get(0)][entityPosition.get(1)] = new Water();
 
+        findPlayer().addTotalTurns(1);
+        findPlayer().removeTurns(1);
+
         //checks if the entity is the player
         if (entity instanceof Player) {
             if (placeholder instanceof Food) { //checks if the player collided with a food
@@ -313,6 +315,7 @@ public class Grid {
             }
         }
 
+        findPlayer().calculateScore();
     }
 
     public void movePlayerToNextLevel(GameObjects[][] grid){

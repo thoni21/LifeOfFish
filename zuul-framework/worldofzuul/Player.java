@@ -4,12 +4,14 @@ public class Player extends GameObjects{
     double score;
     int speed;
     boolean alive;
+    private int totalTurns;
 
-    public Player(String name, double score, int turnValue, int speed, double pollutionLevel, String symbol){
-        super(name,turnValue,symbol,pollutionLevel);
+    public Player(String name, int turnValue, int speed, double pollutionLevel, String symbol){
+        super(name,turnValue,symbol);
         this.speed = speed;
-        this.score = score;
         this.alive = true;
+        this.totalTurns = 0;
+        this.score = 0;
     }
 
     public int getTurns(){
@@ -28,6 +30,16 @@ public class Player extends GameObjects{
         this.turnValue -= loss;
     }
 
+    public int getTotalTurns() {
+        return totalTurns;
+    }
+
+    public void addTotalTurns(int i) {
+        this.totalTurns += i;
+    }
+    public void calculateScore(){
+        this.score = totalTurns * 10 - pollutionValue;
+    }
 
     public void triggerDeath(){
         this.alive = false;

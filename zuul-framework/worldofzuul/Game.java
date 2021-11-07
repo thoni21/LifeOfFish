@@ -45,16 +45,21 @@ public class Game
     }
 
 
-
     public void play() {
         printWelcome();
+        System.out.println("This is your score: " +currentRoom.getGridMap().findPlayer().getScore());
+        System.out.println("you have swum a total of: " +currentRoom.getGridMap().findPlayer().getTotalTurns());
 
         boolean finished = false;
         while (! finished) {
             Command command = parser.getCommand();
             finished = processCommand(command, currentRoom.getGridMap());
             currentRoom.getGridMap().printGrid();
+            if((currentRoom.getGridMap().findPlayer().getTotalTurns() >= 5)){
+                System.out.println("You are now able to move on");
+            }
             System.out.println("This is your score: " +currentRoom.getGridMap().findPlayer().getScore());
+            System.out.println("you have swum a total of: " +currentRoom.getGridMap().findPlayer().getTotalTurns());
         }
         System.out.println("Thank you for playing.  Good bye.");
     }
@@ -83,9 +88,11 @@ public class Game
             printHelp();
         }
         else if (commandWord == CommandWord.GO) {
-            if(command.getSecondWord().equals("next")){
-                goRoom(command);
-            }else {
+            if(currentRoom.getGridMap().findPlayer().getTotalTurns() >= 5){
+                if(command.getSecondWord().equals("next")){
+                    goRoom(command);
+            }
+            } else {
                 goInGrid(command, grid);
             }
         }
