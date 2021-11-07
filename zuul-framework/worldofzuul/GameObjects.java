@@ -32,4 +32,5 @@ public abstract class GameObjects {
     }
 
     public String getSymbol(){return symbol;}
+
 }
