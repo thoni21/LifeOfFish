@@ -13,7 +13,6 @@ public class Game
 
     public Game() 
     {
-        createGrid(5,5);
         createRooms();
         parser = new Parser();
     }
@@ -21,6 +20,7 @@ public class Game
     public static void main(String[] args){
         Game myGame = new Game ();
         myGame.play();
+
     }
 
     private void createRooms()
@@ -49,89 +49,19 @@ public class Game
         currentRoom = outside;
     }
 
-    private void createGrid(int l, int b){
 
-        //a list of the quantity of different entities
-        int playerQuantity = 1;
-        int enemiesQuantity = 1;
-        int foodQuantity = 3;
-        int obstaclesQuantity = 2;
-        int totalQuantity = playerQuantity+enemiesQuantity+
-                foodQuantity+obstaclesQuantity;
-
-
-        //a number that shows where en the Array there's room
-        int placeCounter = 0;
-
-        //Array where all entities are going in
-        GameObjects[] objectList = new GameObjects[totalQuantity];
-
-        //creating the player
-        objectList[placeCounter] = new Player("Tuna",0.0,20,1,0.0,"\uD83D\uDC1F");
-        placeCounter++;
-
-
-        //loop that creates enemies and places them in the array
-        for(int i = 0; i < enemiesQuantity; i++){
-            objectList[placeCounter] = new Enemies("Shark",-100,1,"\uD83D\uDC0A");
-            placeCounter++;
-        }
-        //loop that creates food and places them in the array
-        for(int i = 0; i < foodQuantity; i++){
-            objectList[placeCounter] = new Food("Crab",placeCounter,3.2,"\uD83E\uDD80");
-            placeCounter++;
-        }
-        //loop that creates obstacles and places them in the array
-        for(int i = 0; i < obstaclesQuantity; i++){
-            objectList[placeCounter] = new Obstacles("Hard plastic",-i,i+2,"O");
-            placeCounter++;
-        }
-
-        //creates the 2D grid
-        GameObjects[][] grid = new GameObjects[l][b];
-
-        //creates a 1D grad copy with a ArrayList
-        ArrayList<GameObjects>  gridCopy = new ArrayList<>();
-
-        //places all entities in the gridCopy
-        for(int i = 0; i < l*b; i++){
-            try{
-                gridCopy.add(objectList[i]);
-            }catch (ArrayIndexOutOfBoundsException ex){
-                gridCopy.add(new Water());
-            }
-        }
-        //shuffles all entities in the ArrayList
-        Collections.shuffle(gridCopy);
-
-        //marge 1D grid with 2D grid
-        int count = 0;
-        for(int i = 0; i < l; i++){
-            for(int j = 0; j < b; j++){
-             grid[j][i] = gridCopy.get(count);
-             count++;
-            }
-        }
-
-        //prints its out
-        for (int y=0 ; y<grid.length ; y++) {
-            for (int x=0 ; x< grid[y].length ; x++) {
-                System.out.print(" "+grid[x][y].getSymbol()+" ");
-            }
-            System.out.println("");
-        }
-
-    }
 
     public void play() 
     {            
         printWelcome();
+        Grid game = new Grid(9,9,0,5,2);
+        game.printGrid();
 
-                
         boolean finished = false;
         while (! finished) {
             Command command = parser.getCommand();
-            finished = processCommand(command);
+            finished = processCommand(command, game);
+            game.printGrid();
         }
         System.out.println("Thank you for playing.  Good bye.");
     }
@@ -139,14 +69,15 @@ public class Game
     private void printWelcome()
     {
         System.out.println();
-        System.out.println("Welcome to the World of Zuul!");
-        System.out.println("World of Zuul is a new, incredibly boring adventure game.");
+        System.out.println("Welcome to the Life of Fish!");
+        System.out.println("You are a fish, trying to survive at sea.");
+        System.out.println("Your goal is to survive without becoming polluted.");
         System.out.println("Type '" + CommandWord.HELP + "' if you need help.");
         System.out.println();
         System.out.println(currentRoom.getLongDescription());
     }
 
-    private boolean processCommand(Command command) 
+    private boolean processCommand(Command command, Grid grid)
     {
         boolean wantToQuit = false;
 
@@ -161,7 +92,7 @@ public class Game
             printHelp();
         }
         else if (commandWord == CommandWord.GO) {
-            goRoom(command);
+            goIngrid(command, grid);
         }
         else if (commandWord == CommandWord.QUIT) {
             wantToQuit = quit(command);
@@ -171,31 +102,29 @@ public class Game
 
     private void printHelp() 
     {
-        System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at the university.");
+        System.out.println("You are a fish swimming at sea.");
+        System.out.println("\uD83D\uDC1F = You!");
+        System.out.println("\uD83E\uDD80 = Food, yum!");
+        System.out.println("☠ = Enemy, steer clear!");
+        System.out.println("# = Obstacle, annoying!");
         System.out.println();
         System.out.println("Your command words are:");
         parser.showCommands();
     }
 
-    private void goRoom(Command command) 
+    private void goIngrid(Command command, Grid grid)
     {
         if(!command.hasSecondWord()) {
             System.out.println("Go where?");
             return;
         }
 
-        String direction = command.getSecondWord();
-
-        Room nextRoom = currentRoom.getExit(direction);
-
-        if (nextRoom == null) {
-            System.out.println("There is no door!");
+        try {
+            grid.gridMovement(grid.findPlayer(),command);
+        } catch (IllegalMoveException ex) {
+            System.out.println(ex);;
         }
-        else {
-            currentRoom = nextRoom;
-            System.out.println(currentRoom.getLongDescription());
-        }
+
     }
 
     private boolean quit(Command command) 

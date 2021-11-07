@@ -1,20 +1,10 @@
 package worldofzuul;
 
 public class Water extends GameObjects{
-    String name;
-    String symbol;
+
     public Water(){
-        this.name = "water";
-        this.symbol = "≋";
+        super("water", 0,"≋",0.5);
     }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getSymbol(){return symbol;}
 
     @Override
     public String toString(){
