@@ -121,8 +121,8 @@ public class Game
 
         try {
             grid.gridMovement(grid.findPlayer(),command);
-        } catch (IllegalMoveException e) {
-            e.printStackTrace();
+        } catch (IllegalMoveException ex) {
+            System.out.println(ex);;
         }
 
     }
