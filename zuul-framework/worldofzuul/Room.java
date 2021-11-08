@@ -5,18 +5,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 
-public class Room 
+public class Room
 {
     private String description;
     private HashMap<String, Room> exits;
+    private Grid gridMap;
+    int roomCount = 0;
 
-    public Room(String description) 
-    {
+    public Room(String description) {
         this.description = description;
         exits = new HashMap<String, Room>();
+        int[][] difficulty = {{7,7,1,1,1},{9,9,1,6,1},{9,9,1,1,1},{9,9,1,1,1},{9,9,1,1,1},{9,9,1,1,1}};
+        gridMap = new Grid(difficulty[roomCount][0],difficulty[roomCount][1],difficulty[roomCount][2],
+                difficulty[roomCount][3],difficulty[roomCount][4]);
+        roomCount ++;
     }
 
-    public void setExit(String direction, Room neighbor) 
+    public void setExit(String direction, Room neighbor)
     {
         exits.put(direction, neighbor);
     }
@@ -26,9 +31,13 @@ public class Room
         return description;
     }
 
+    public Grid getGridMap() {
+        return gridMap;
+    }
+
     public String getLongDescription()
     {
-        return "You are " + description + ".\n" + getExitString();
+        return "You are " + description + ".\n";
     }
 
     private String getExitString()
@@ -41,7 +50,7 @@ public class Room
         return returnString;
     }
 
-    public Room getExit(String direction) 
+    public Room getExit(String direction)
     {
         return exits.get(direction);
     }
