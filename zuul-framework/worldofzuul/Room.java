@@ -18,7 +18,12 @@ public class Room
         this.exits = new HashMap<String, Room>();
         this.unlockNextLevel = unlockNextLevel;
 
-        int[][] difficulty = {{7,7,1,1,1},{9,9,1,6,1},{9,9,1,1,1},{9,9,1,1,1},{9,9,1,1,1},{9,9,1,1,1}};
+        //The following code describes the difficulty and size of the individual levels.
+        //The first two integers determine the grid size.
+        //The third integer determines the quantity of enemies
+        //The fourth integer determines the quantity of food
+        //The fifth integer determines the quantity of obstacles
+        int[][] difficulty = {{5,5,4,2,3},{7,7,8,5,6},{9,9,10,5,16},{9,9,12,5,20},{9,9,14,5,22},{11,11,16,9,35}};
         grid = new Grid(difficulty[roomCount][0],difficulty[roomCount][1],difficulty[roomCount][2],
                 difficulty[roomCount][3],difficulty[roomCount][4]);
         roomCount ++;
@@ -27,11 +32,6 @@ public class Room
     public void setExit(String direction, Room neighbor)
     {
         exits.put(direction, neighbor);
-    }
-
-    public String getShortDescription()
-    {
-        return description;
     }
 
     public Grid getMap() {

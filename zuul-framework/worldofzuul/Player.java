@@ -44,6 +44,7 @@ public class Player extends GameObjects{
     public void triggerDeath(){
         this.alive = false;
     }
+
     public boolean status(){
         boolean placeholder = this.alive;
         return placeholder;
