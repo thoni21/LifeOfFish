@@ -1,13 +1,13 @@
 package worldofzuul;
 
 public class Player extends GameObjects{
-    double score;
-    int speed;
-    boolean alive;
+    private double score;
+    private int speed;
+    private boolean alive;
     private int totalTurns;
 
-    public Player(String name, int turnValue, int speed, double pollutionLevel, String symbol){
-        super(name,turnValue,symbol);
+    public Player(String name, int turnValue, int speed, double pollutionValue, String symbol){
+        super(name,turnValue,symbol,pollutionValue);
         this.speed = speed;
         this.alive = true;
         this.totalTurns = 0;
@@ -43,6 +43,10 @@ public class Player extends GameObjects{
 
     public void triggerDeath(){
         this.alive = false;
+    }
+    public boolean status(){
+        boolean placeholder = this.alive;
+        return placeholder;
     }
 
     @Override

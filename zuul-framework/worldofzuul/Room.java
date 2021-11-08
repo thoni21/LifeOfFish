@@ -9,14 +9,17 @@ public class Room
 {
     private String description;
     private HashMap<String, Room> exits;
-    private Grid gridMap;
-    int roomCount = 0;
+    private int unlockNextLevel;
+    private Grid grid;
+    static int roomCount = 0;
 
-    public Room(String description) {
+    public Room(String description, int unlockNextLevel) {
         this.description = description;
-        exits = new HashMap<String, Room>();
+        this.exits = new HashMap<String, Room>();
+        this.unlockNextLevel = unlockNextLevel;
+
         int[][] difficulty = {{7,7,1,1,1},{9,9,1,6,1},{9,9,1,1,1},{9,9,1,1,1},{9,9,1,1,1},{9,9,1,1,1}};
-        gridMap = new Grid(difficulty[roomCount][0],difficulty[roomCount][1],difficulty[roomCount][2],
+        grid = new Grid(difficulty[roomCount][0],difficulty[roomCount][1],difficulty[roomCount][2],
                 difficulty[roomCount][3],difficulty[roomCount][4]);
         roomCount ++;
     }
@@ -31,8 +34,8 @@ public class Room
         return description;
     }
 
-    public Grid getGridMap() {
-        return gridMap;
+    public Grid getMap() {
+        return grid;
     }
 
     public String getLongDescription()
@@ -53,6 +56,10 @@ public class Room
     public Room getExit(String direction)
     {
         return exits.get(direction);
+    }
+
+    public int getUnlockNextLevel() {
+        return unlockNextLevel;
     }
 }
 

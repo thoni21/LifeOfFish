@@ -31,7 +31,7 @@ public class Parser
                 word2 = tokenizer.next(); 
             }
         }
-
+        tokenizer.close();
         return new Command(commands.getCommandWord(word1), word2);
     }
 

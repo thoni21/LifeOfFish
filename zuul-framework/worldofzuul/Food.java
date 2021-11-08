@@ -3,7 +3,7 @@ package worldofzuul;
 public class Food extends GameObjects{
 
     public Food(String name, int turnValue, double pollutionValue, String symbol) {
-        super(name, turnValue, symbol);
+        super(name, turnValue, symbol, pollutionValue);
     }
 
     @Override

@@ -44,7 +44,7 @@ public class Grid {
 
         //loop that creates enemies and places them in the array
         for (int i = 0; i < enemiesQuantity; i++) {
-            objectList[placeCounter] = new Enemies("Shark", -100, 1, "\uD83D\uDC19");
+            objectList[placeCounter] = new Enemies("Octopus", -100, 1, "\uD83D\uDC19");
             placeCounter++;
         }
         //loop that creates food and places them in the array
@@ -79,7 +79,7 @@ public class Grid {
         int count = 0;
         for (int i = 0; i < column; i++) {
             for (int j = 0; j < row; j++) {
-                grid[i][j] = gridCopy.get(count);
+                grid[j][i] = gridCopy.get(count);
                 count++;
             }
         }
@@ -91,7 +91,7 @@ public class Grid {
     public void printGrid() {
         for (int column = 0; column < this.grid.length; column++) {
             for (int row = 0; row < this.grid[column].length; row++) {
-                System.out.print(" " + this.grid[column][row].getSymbol() + " ");
+                System.out.print(" " + this.grid[row][column].getSymbol() + " ");
             }
             System.out.println("");
         }
@@ -103,11 +103,11 @@ public class Grid {
         ArrayList<Integer> position = new ArrayList<>();
 
         //checks all positions in the 2D array for the entity
-        for (int y = 0; y < this.column; y++) {
-            for (int x = 0; x < this.row; x++) {
-                if (this.grid[y][x] == entity) {
-                    position.add(y);
-                    position.add(x);
+        for (int column = 0; column < this.grid.length; column++) {
+            for (int row = 0; row < this.grid[column].length; row++) {
+                if (this.grid[row][column] == entity) {
+                    position.add(row);
+                    position.add(column);
                     break;
                 }
             }
@@ -121,11 +121,11 @@ public class Grid {
         ArrayList<Integer> position = new ArrayList<>();
 
         //checks all positions in the 2D array for the player
-        for (int y = 0; y < this.column; y++) {
-            for (int x = 0; x < this.row; x++) {
-                if (this.grid[y][x] instanceof Player) {
-                    position.add(y);
-                    position.add(x);
+        for (int column = 0; column < this.column; column++) {
+            for (int row = 0; row < this.grid[column].length; row++) {
+                if (this.grid[row][column] instanceof Player) {
+                    position.add(row);
+                    position.add(column);
                     break;
                 }
             }
@@ -136,18 +136,18 @@ public class Grid {
     public void gridMovement(GameObjects entity, Command direction) throws IllegalMoveException {
 
         //2 values that represent where the entity is going
-        int i = 0;
-        int j = 0;
+        int row = 0;
+        int column = 0;
 
         //manipulation of the 2 values according to the action
         if (direction.getSecondWord().equals("right")) {
-            i = 1;
+            row = 1;
         } else if (direction.getSecondWord().equals("left")) {
-            i = -1;
+            row = -1;
         } else if (direction.getSecondWord().equals("up")) {
-            j = -1;
+            column = -1;
         } else if (direction.getSecondWord().equals("down")) {
-            j = 1;
+            column = 1;
         }
 
         //method that finds the entity position in the grid
@@ -156,13 +156,13 @@ public class Grid {
         //takes whatever there is on the position the entity is about to go to at stores it
         GameObjects placeholder = null;
         try {
-           placeholder = this.grid[entityPosition.get(0) + j][entityPosition.get(1) + i];
+           placeholder = this.grid[entityPosition.get(0) + row][entityPosition.get(1) + column];
        } catch (IndexOutOfBoundsException ex){
            throw new IllegalMoveException("this is a illegal move, try something else.");
        }
 
         //overrides that position with the entity
-        this.grid[entityPosition.get(0) + j][entityPosition.get(1) + i] = entity;
+        this.grid[entityPosition.get(0) + row][entityPosition.get(1) + column] = entity;
 
         //places water where original the entity was
         this.grid[entityPosition.get(0)][entityPosition.get(1)] = new Water();
@@ -214,27 +214,27 @@ public class Grid {
         findPlayer().calculateScore();
     }
 
-    public void movePlayerToNextLevel(GameObjects[][] grid){
+    public void movePlayerToNextLevel(Grid grid){
 
         //list that's going to get returned
         ArrayList<Integer> position = new ArrayList<>();
 
         //checks all positions in the 2D array for the player
-        for (int y = 0; y < grid.length; y++) {
-            for (int x = 0; x < grid[y].length; x++) {
-                if (this.grid[y][x] instanceof Player) {
-                    position.add(y);
-                    position.add(x);
+        for (int column = 0; column < grid.getGrid().length; column++) {
+            for (int row = 0; row < grid.getGrid()[column].length; row++) {
+                if (grid.getGrid()[row][column] instanceof Player) {
+                    position.add(row);
+                    position.add(column);
                     break;
                 }
             }
         }
 
-        this.grid[getPosition(findPlayer()).get(0)][getPosition(findPlayer()).get(1)] = grid[position.get(0)]
-                [position.get(1)];
+        this.grid[getPosition(findPlayer()).get(0)][getPosition(findPlayer()).get(1)]
+                = (Player) grid.getGrid()[position.get(0)][position.get(1)];
     }
-    public GameObjects[][] cloneGrid(){
 
-        return this.grid.clone();
+    public GameObjects[][] getGrid() {
+        return grid;
     }
 }

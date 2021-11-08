@@ -3,7 +3,7 @@ package worldofzuul;
 public class Water extends GameObjects{
 
     public Water(){
-        super("water", 0,"≋");
+        super("water", 0,"≋", 0.5);
     }
 
     @Override

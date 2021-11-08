@@ -1,11 +1,5 @@
 package worldofzuul;
 
-import java.io.OptionalDataException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.concurrent.ThreadLocalRandom;
-
 public class Game
 {
     private Parser parser;
@@ -25,15 +19,12 @@ public class Game
     public void createRooms() {
         Room level1, level2, level3, level4, level5, level6;
 
-        level1 = new Room("at the first level");
-        level2 = new Room("now at level 2");
-        level3 = new Room("now at level level 3");
-        level4 = new Room("now at level level 4");
-        level5 = new Room("now at level level 5");
-        level6 = new Room("now at the final level");
-
-        level1.getGridMap().printGrid();
-
+        level1 = new Room("at the first level",5);
+        level2 = new Room("now at level 2",10);
+        level3 = new Room("now at level 3",15);
+        level4 = new Room("now at level 4",20);
+        level5 = new Room("now at level 5",25);
+        level6 = new Room("now at the final level",30);
 
         level1.setExit("next", level2);
         level2.setExit("next", level3);
@@ -47,19 +38,26 @@ public class Game
 
     public void play() {
         printWelcome();
-        System.out.println("This is your score: " +currentRoom.getGridMap().findPlayer().getScore());
-        System.out.println("you have swum a total of: " +currentRoom.getGridMap().findPlayer().getTotalTurns());
+        currentRoom.getMap().printGrid();
+        currentRoom.getMap().findPlayer().calculateScore();
+        System.out.println("Score: "+currentRoom.getMap().findPlayer().getScore()+
+                "    Energy: "+currentRoom.getMap().findPlayer().getTurns()+
+                "    Swum: "+currentRoom.getMap().findPlayer().getTotalTurns());
 
         boolean finished = false;
         while (! finished) {
             Command command = parser.getCommand();
-            finished = processCommand(command, currentRoom.getGridMap());
-            currentRoom.getGridMap().printGrid();
-            if((currentRoom.getGridMap().findPlayer().getTotalTurns() >= 5)){
-                System.out.println("You are now able to move on");
+            finished = processCommand(command);
+            finished = !currentRoom.getMap().findPlayer().status();
+            if(currentRoom.getMap().findPlayer().getTurns() == 0){
+                finished = true;
             }
-            System.out.println("This is your score: " +currentRoom.getGridMap().findPlayer().getScore());
-            System.out.println("you have swum a total of: " +currentRoom.getGridMap().findPlayer().getTotalTurns());
+            if(!finished){
+                currentRoom.getMap().printGrid();
+                System.out.println("Score: "+currentRoom.getMap().findPlayer().getScore()+
+                        "    Energy: "+currentRoom.getMap().findPlayer().getTurns()+
+                        "    Swum: "+currentRoom.getMap().findPlayer().getTotalTurns());
+            }
         }
         System.out.println("Thank you for playing.  Good bye.");
     }
@@ -74,7 +72,7 @@ public class Game
         System.out.println(currentRoom.getLongDescription());
     }
 
-    private boolean processCommand(Command command, Grid grid) {
+    private boolean processCommand(Command command) {
         boolean wantToQuit = false;
 
         CommandWord commandWord = command.getCommandWord();
@@ -87,14 +85,14 @@ public class Game
         if (commandWord == CommandWord.HELP) {
             printHelp();
         }
-        else if (commandWord == CommandWord.GO) {
-            if(currentRoom.getGridMap().findPlayer().getTotalTurns() >= 5){
-                if(command.getSecondWord().equals("next")){
-                    goRoom(command);
+        else if (commandWord == CommandWord.GO && command.getSecondWord().equals("next")) {
+            if(currentRoom.getMap().findPlayer().getScore() >= currentRoom.getUnlockNextLevel()){
+                goRoom(command);
+            } else{
+                System.out.println("you can't move on right now, try something else.");
             }
-            } else {
-                goInGrid(command, grid);
-            }
+        }else if(commandWord == commandWord.GO){
+            goInGrid(command);
         }
         else if (commandWord == CommandWord.QUIT) {
             wantToQuit = quit(command);
@@ -107,46 +105,34 @@ public class Game
         System.out.println("You are a fish swimming at sea.");
         System.out.println("\uD83D\uDC1F = You!");
         System.out.println("\uD83E\uDD80 = Food, yum!");
-        System.out.println("☠ = Enemy, steer clear!");
-        System.out.println("# = Obstacle, annoying!");
+        System.out.println("\uD83D\uDC19 = Enemy, steer clear!");
+        System.out.println("\uD83D\uDDD1 = Obstacle, annoying!");
         System.out.println();
         System.out.println("Your command words are:");
         parser.showCommands();
     }
 
-    private void goInGrid(Command command, Grid grid) {
+    private void goInGrid(Command command) {
         if(!command.hasSecondWord()) {
             System.out.println("Go where?");
             return;
         }
         try {
-            grid.gridMovement(grid.findPlayer(),command);
+            currentRoom.getMap().gridMovement(currentRoom.getMap().findPlayer(), command);
         } catch (IllegalMoveException ex) {
-            System.out.println(ex);;
+            System.out.println(ex);
         }
-
     }
     private void goRoom(Command command) {
-        if(!command.hasSecondWord()) {
-            System.out.println("Go where?");
-            return;
-        }
 
-        GameObjects[][] placeholder = currentRoom.getGridMap().cloneGrid();
+        Grid placeholder = currentRoom.getMap();
 
         String direction = command.getSecondWord();
 
-        Room nextRoom = currentRoom.getExit(direction);
+        currentRoom = currentRoom.getExit(direction);
+        System.out.println(currentRoom.getLongDescription());
 
-        if (nextRoom == null) {
-            System.out.println("There is no door!");
-        }
-        else {
-            currentRoom = nextRoom;
-            System.out.println(currentRoom.getLongDescription());
-        }
-
-        currentRoom.getGridMap().movePlayerToNextLevel(placeholder);
+        currentRoom.getMap().movePlayerToNextLevel(placeholder);
     }
 
 

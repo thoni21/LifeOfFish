@@ -3,7 +3,7 @@ package worldofzuul;
 public class Obstacles extends GameObjects{
 
     public Obstacles(String name, int turnValue, double pollutionValue, String symbol) {
-        super(name, turnValue, symbol);
+        super(name, turnValue, symbol, pollutionValue);
     }
 
     @Override
