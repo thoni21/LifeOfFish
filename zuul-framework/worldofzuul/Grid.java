@@ -133,116 +133,7 @@ public class Grid {
         return (Player) this.grid[position.get(0)][position.get(1)];
     }
 
-    private boolean positionCheck(GameObjects entity, int positionCode) {
-        // 1 = upper side, 2 = Right side, 3 = lower side, 4 = left side and 5 = the middle
-
-        //boolean that's gets manipulated and returned
-        boolean checker = false;
-
-        //5 cases where each possible placement excluding the corners are checked
-        switch (positionCode) {
-            case 1:
-                for (int i = 1; i < this.column - 1; i++) {
-                    if (this.grid[i][0] == entity) {
-                        checker = true;
-                        break;
-                    }
-                }
-            case 2:
-                for (int i = 1; i < this.row - 1; i++) {
-                    if (this.grid[this.column-1][i] == entity) {
-                        checker = true;
-                        break;
-                    }
-                }
-            case 3:
-                for (int i = 1; i < this.column - 1; i++) {
-                    if (this.grid[i][this.row-1] == entity) {
-                        checker = true;
-                        break;
-                    }
-                }
-            case 4:
-                for (int i = 1; i < this.row - 1; i++) {
-                    if (this.grid[0][i] == entity) {
-                        checker = true;
-                        break;
-                    }
-                }
-            case 5:
-                for (int i = 1; i < this.column - 1; i++) {
-                    for (int j = 1; j < this.row - 1; j++) {
-                        if (this.grid[i][j] == entity) {
-                            checker = true;
-                            break;
-                        }
-                    }
-                }
-        }
-        return checker;
-
-    }
-
-    private boolean isLegalMove(GameObjects entity, Command direction) {
-        //boolean that's gets manipulated and returned
-        boolean isLegalMove = false;
-
-        //9 different if-else statements that cover each position and available move options
-
-        //checks if the player stands up in the left corner, and that's he inputs the right second word
-        if (this.grid[0][0] == entity && (!direction.getSecondWord().equals("left") ||
-                !direction.getSecondWord().equals("up"))) {
-            isLegalMove = true;
-        }
-        //checks if the player stands up in the right corner, and that's he inputs the right second word
-        else if (this.grid[this.column-1][0] == entity && (!direction.getSecondWord().equals("right") ||
-                !direction.getSecondWord().equals("up"))) {
-            isLegalMove = true;
-        }
-        //checks if the player stands in the bottom left corner, and that's he inputs the right second word
-        else if (this.grid[0][this.row-1] == entity && (!direction.getSecondWord().equals("left") ||
-                !direction.getSecondWord().equals("down"))) {
-            isLegalMove = true;
-        }
-        //checks if the player stands in the bottom right corner, and that's he inputs the right second word
-        else if (this.grid[this.column-1][this.row-1] == entity && (!direction.getSecondWord().equals("right") ||
-                !direction.getSecondWord().equals("down"))) {
-            isLegalMove = true;
-        }
-        //with help from the method positionCheck it checks if the player is on the upper side of the map
-        // and that's he inputs the right second word
-        else if (positionCheck(entity, 1) && !direction.getSecondWord().equals("up")){
-            isLegalMove = true;
-        }
-        //with help from the method positionCheck it checks if the player is on the right side of the map
-        // and that's he inputs the right second word
-        else if (positionCheck(entity, 2) && !direction.getSecondWord().equals("right")){
-            isLegalMove = true;
-        }
-        //with help from the method positionCheck it checks if the player is on the lower side of the map
-        // and that's he inputs the right second word
-        else if (positionCheck(entity, 3) && !direction.getSecondWord().equals("down")){
-            isLegalMove = true;
-        }
-        //with help from the method positionCheck it checks if the player is on the left side of the map
-        // and that's he inputs the right second word
-        else if (positionCheck(entity, 4) && !direction.getSecondWord().equals("left")) {
-            isLegalMove = true;
-        }
-        //with help from the method positionCheck it checks if the player is in the middle
-        // and that's he inputs the right second word
-        else if (positionCheck(entity, 5)) {
-            isLegalMove = true;
-        }
-        return isLegalMove;
-    }
-
     public void gridMovement(GameObjects entity, Command direction) throws IllegalMoveException {
-
-        //finds out if the action is legal if not it throws an exception
-        if (!isLegalMove(entity, direction)) {
-            throw new IllegalMoveException("this is a illegal move, try something else.");
-        }
 
         //2 values that represent where the entity is going
         int i = 0;
@@ -263,7 +154,12 @@ public class Grid {
         ArrayList<Integer> entityPosition = getPosition(entity);
 
         //takes whatever there is on the position the entity is about to go to at stores it
-        GameObjects placeholder = this.grid[entityPosition.get(0) + j][entityPosition.get(1) + i];
+        GameObjects placeholder = null;
+        try {
+           placeholder = this.grid[entityPosition.get(0) + j][entityPosition.get(1) + i];
+       } catch (IndexOutOfBoundsException ex){
+           throw new IllegalMoveException("this is a illegal move, try something else.");
+       }
 
         //overrides that position with the entity
         this.grid[entityPosition.get(0) + j][entityPosition.get(1) + i] = entity;
