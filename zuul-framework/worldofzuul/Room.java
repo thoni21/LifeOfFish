@@ -7,16 +7,19 @@ import java.util.Iterator;
 
 public class Room
 {
+
+    //Attributes
     private String description;
     private HashMap<String, Room> exits;
-    private int unlockNextLevel;
+    private int scoreToNextLevel;
     private Grid grid;
-    static int roomCount = 0;
+    private static int roomCount = 0;
 
-    public Room(String description, int unlockNextLevel) {
+    //Constructor
+    public Room(String description, int scoreToNextLevel) {
         this.description = description;
         this.exits = new HashMap<String, Room>();
-        this.unlockNextLevel = unlockNextLevel;
+        this.scoreToNextLevel = scoreToNextLevel;
 
         //The following code describes the difficulty and size of the individual levels.
         //The first two integers determine the grid size.
@@ -29,6 +32,7 @@ public class Room
         roomCount ++;
     }
 
+    //Methods
     public void setExit(String direction, Room neighbor)
     {
         exits.put(direction, neighbor);
@@ -43,23 +47,13 @@ public class Room
         return "You are " + description + ".\n";
     }
 
-    private String getExitString()
-    {
-        String returnString = "Exits:";
-        Set<String> keys = exits.keySet();
-        for(String exit : keys) {
-            returnString += " " + exit;
-        }
-        return returnString;
-    }
-
     public Room getExit(String direction)
     {
         return exits.get(direction);
     }
 
-    public int getUnlockNextLevel() {
-        return unlockNextLevel;
+    public int scoreToNextLevel() {
+        return this.scoreToNextLevel;
     }
 }
 

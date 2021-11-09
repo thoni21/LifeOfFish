@@ -4,20 +4,24 @@ import java.util.ArrayList;
 
 public class Game
 {
+    //Attributes
     private Parser parser;
     private Room currentRoom;
 
+    //Constructor
     public Game() {
         createRooms();
         parser = new Parser();
     }
 
+    //Main method
     public static void main(String[] args){
         Game myGame = new Game ();
         myGame.play();
 
     }
 
+    //Method to create rooms, and set keyword for next room
     public void createRooms() {
         Room level1, level2, level3, level4, level5, level6;
 
@@ -37,29 +41,34 @@ public class Game
         currentRoom = level1;
     }
 
-
+    //Play method, flow of the game
     public void play() {
-        printWelcome();
-        currentRoom.getMap().printGrid();
-        currentRoom.getMap().findPlayer().calculateScore();
-        System.out.println("Score: "+currentRoom.getMap().findPlayer().getScore()+
-                "    Energy: "+currentRoom.getMap().findPlayer().getTurns()+
-                "    Turns used: "+currentRoom.getMap().findPlayer().getTotalTurns());
 
+        //Uses printWelcome method
+        printWelcome();
+
+        //Boolean finished set to false, game runs while finished is not true
         boolean finished = false;
         while (! finished) {
-            Command command = parser.getCommand();
-            finished = processCommand(command) || !currentRoom.getMap().findPlayer().status();
 
+            //Asks for command
+            Command command = parser.getCommand();
+
+            //Checks if command = finished or player is dead
+            finished = processCommand(command) || !currentRoom.getMap().findPlayer().status();
             if(currentRoom.getMap().findPlayer().getTurns() == 0){
                 finished = true;
             }
+
+            //Runs game, if finished is false
             if(!finished){
                 currentRoom.getMap().printGrid();
                 System.out.println("Score: "+currentRoom.getMap().findPlayer().getScore()+
                         "    Energy: "+currentRoom.getMap().findPlayer().getTurns()+
                         "    Turns used: "+currentRoom.getMap().findPlayer().getTotalTurns());
-                if(currentRoom.getMap().findPlayer().getScore() >= currentRoom.getUnlockNextLevel()){
+
+                //Checks if score is larger than or equal to scoreToNextLevel
+                if(currentRoom.getMap().findPlayer().getScore() >= currentRoom.scoreToNextLevel()){
                     System.out.println("You have reached a high enough score to go to the next level!");
                     System.out.println("Type 'go next' to go to the next level! \nHowever you don't have to.");
                 }
@@ -68,6 +77,7 @@ public class Game
         System.out.println("Thank you for playing.  Good bye.");
     }
 
+    //Method to print the welcome message to the player
     private void printWelcome() {
         System.out.println();
         System.out.println("Welcome to the Life of Fish!");
@@ -76,8 +86,17 @@ public class Game
         System.out.println("Type '" + CommandWord.HELP + "' if you need help.");
         System.out.println();
         System.out.println(currentRoom.getLongDescription());
+
+        currentRoom.getMap().printGrid();
+        currentRoom.getMap().findPlayer().calculateScore();
+        System.out.println("Score: "+currentRoom.getMap().findPlayer().getScore()+
+                "    Energy: "+currentRoom.getMap().findPlayer().getTurns()+
+                "    Turns used: "+currentRoom.getMap().findPlayer().getTotalTurns());
+
     }
 
+    //Method to process commands
+    //Checks what commandword has been inserted, and acts on that
     private boolean processCommand(Command command) {
         boolean wantToQuit = false;
 
@@ -92,7 +111,7 @@ public class Game
             printHelp();
         }
         else if (commandWord == CommandWord.GO && command.getSecondWord().equals("next")) {
-            if(currentRoom.getMap().findPlayer().getScore() >= currentRoom.getUnlockNextLevel()){
+            if(currentRoom.getMap().findPlayer().getScore() >= currentRoom.scoreToNextLevel()){
                 goRoom(command);
             } else{
                 System.out.println("You cannot go to the next level right now, try getting a some more score.");
@@ -107,6 +126,7 @@ public class Game
         return wantToQuit;
     }
 
+    //Guide for player
     private void printHelp() {
         System.out.println("You are a fish swimming at sea.");
         System.out.println("You must move around to gain score and consume food as to not lose energy.");
@@ -119,30 +139,41 @@ public class Game
         parser.showCommands();
     }
 
+    //Movement for player
     private void goInGrid(Command command) {
+
+        //Checks if player forgot to write second word wth go command
         if(!command.hasSecondWord()) {
             System.out.println("Go where?");
             return;
         }
+
+        //Checks weather or not the player has made an illegal move
         try {
             currentRoom.getMap().gridMovement(currentRoom.getMap().findPlayer(), command);
         } catch (IllegalMoveException ex) {
             System.out.println(ex);
         }
     }
+
+    //Method to change room
     private void goRoom(Command command) {
 
+        //Makes placeholder of current grid
         Grid placeholder = currentRoom.getMap();
 
         String direction = command.getSecondWord();
 
+        //Switches room
         currentRoom = currentRoom.getExit(direction);
         System.out.println(currentRoom.getLongDescription());
 
+        //Makes player from placholder grid, equal to player from new grid
         currentRoom.getMap().movePlayerToNextLevel(placeholder);
     }
 
 
+    //Sets quit to true, unless player wrote secondword with quit
     private boolean quit(Command command) 
     {
         if(command.hasSecondWord()) {

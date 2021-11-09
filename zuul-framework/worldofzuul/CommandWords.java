@@ -4,8 +4,10 @@ import java.util.HashMap;
 
 public class CommandWords
 {
+    //Attributes
     private HashMap<String, CommandWord> validCommands;
 
+    //Constructor
     public CommandWords()
     {
         validCommands = new HashMap<String, CommandWord>();
@@ -26,12 +28,14 @@ public class CommandWords
             return CommandWord.UNKNOWN;
         }
     }
-    
+
+    //Checks if string is command word
     public boolean isCommand(String aString)
     {
         return validCommands.containsKey(aString);
     }
 
+    //Displays all commands
     public void showAll() 
     {
         for(String command : validCommands.keySet()) {

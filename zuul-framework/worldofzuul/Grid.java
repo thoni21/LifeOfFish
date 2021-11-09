@@ -7,14 +7,16 @@ import java.util.Collections;
 
 public class Grid {
 
-    int column;
-    int row;
-    int playerQuantity = 1;
-    int enemiesQuantity;
-    int foodQuantity;
-    int obstaclesQuantity;
-    GameObjects[][] grid;
+    //Attributes
+    private int column;
+    private int row;
+    private int playerQuantity = 1;
+    private int enemiesQuantity;
+    private int foodQuantity;
+    private int obstaclesQuantity;
+    private GameObjects[][] grid;
 
+    //Constructor
     public Grid(int column, int row, int enemiesQuantity, int foodQuantity, int obstaclesQuantity) {
         this.column = column;
         this.row = row;
@@ -24,6 +26,7 @@ public class Grid {
         createGrid();
     }
 
+    //Methods
     private void createGrid() {
 
         //a list of the quantity of different entities
@@ -88,6 +91,7 @@ public class Grid {
 
     }
 
+    //Method to print grid
     public void printGrid() {
         for (int column = 0; column < this.grid.length; column++) {
             for (int row = 0; row < this.grid[column].length; row++) {
@@ -115,6 +119,7 @@ public class Grid {
         return position;
     }
 
+    //Method to find player object
     public Player findPlayer() {
 
         //list that's going to get returned
@@ -133,6 +138,7 @@ public class Grid {
         return (Player) this.grid[position.get(0)][position.get(1)];
     }
 
+    //Movement in grid
     public void gridMovement(GameObjects entity, Command direction) throws IllegalMoveException {
 
         //2 values that represent where the entity is going
@@ -173,18 +179,18 @@ public class Grid {
         //checks if the entity is the player
         if (entity instanceof Player) {
             if (placeholder instanceof Food) { //checks if the player collided with a food
-                ((Player) entity).addTurns(placeholder.turnValue);
-                ((Player) entity).addPollutionValue(placeholder.pollutionValue);
+                ((Player) entity).addTurns(placeholder.getTurnValue());
+                ((Player) entity).addPollutionValue(placeholder.getPollutionValue());
 
                 System.out.println("You ate a " + placeholder.getName() + ".");
                 System.out.println("For this action you have gained some energy.");
                 System.out.println("...and maybe something more.");
             } else if (placeholder instanceof Obstacles) { //checks if the player collided with an obstacle
-                ((Player) entity).addTurns(placeholder.turnValue);
-                ((Player) entity).addPollutionValue(placeholder.pollutionValue);
+                ((Player) entity).addTurns(placeholder.getTurnValue());
+                ((Player) entity).addPollutionValue(placeholder.getPollutionValue());
 
                 System.out.println("You accidentally ate a " + placeholder.getName() + ".");
-                if(((Player) entity).turnValue <= 0){
+                if(((Player) entity).getTurnValue() <= 0){
                     ((Player) entity).triggerDeath();
 
                     System.out.println("You have eaten too much waste and as such you have run out of energy.");
@@ -196,10 +202,10 @@ public class Grid {
 
 
             } else if (placeholder instanceof Water) { //checks if the player collided with some water
-                ((Player) entity).addPollutionValue(placeholder.pollutionValue);
+                ((Player) entity).addPollutionValue(placeholder.getPollutionValue());
 
                 System.out.println("There is nothing.");
-                if(((Player) entity).turnValue <= 0){
+                if(((Player) entity).getTurnValue() <= 0){
                     ((Player) entity).triggerDeath();
 
                     System.out.println("You have not eaten enough food and have thus run out of energy.");
@@ -228,6 +234,7 @@ public class Grid {
         findPlayer().calculateScore();
     }
 
+    //Player move to next level
     public void movePlayerToNextLevel(Grid grid){
 
         //list that's going to get returned
