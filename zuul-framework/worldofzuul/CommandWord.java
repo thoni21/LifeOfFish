@@ -2,6 +2,8 @@ package worldofzuul;
 
 public enum CommandWord
 {
+
+    //Creates keywords
     GO("go"), QUIT("quit"), HELP("help"), UNKNOWN("?");
     
     private String commandString;

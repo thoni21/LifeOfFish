@@ -21,15 +21,18 @@ package worldofzuul;
 
 public class Command
 {
+    //Attributes
     private CommandWord commandWord;
     private String secondWord;
 
+    //Constructor
     public Command(CommandWord commandWord, String secondWord)
     {
         this.commandWord = commandWord;
         this.secondWord = secondWord;
     }
 
+    //Methods
     public CommandWord getCommandWord()
     {
         return commandWord;
@@ -38,11 +41,6 @@ public class Command
     public String getSecondWord()
     {
         return secondWord;
-    }
-
-    public boolean isUnknown()
-    {
-        return (commandWord == CommandWord.UNKNOWN);
     }
 
     public boolean hasSecondWord()

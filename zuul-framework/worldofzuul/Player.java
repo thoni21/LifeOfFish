@@ -1,33 +1,26 @@
 package worldofzuul;
 
 public class Player extends GameObjects{
-    double score;
-    int speed;
-    boolean alive;
+
+    //Attributes
+    private double score;
+    private int speed;
+    private boolean alive;
     private int totalTurns;
 
-    public Player(String name, int turnValue, int speed, double pollutionLevel, String symbol){
-        super(name,turnValue,symbol);
+    //Constructor
+    public Player(String name, int turnValue, int speed, double pollutionValue, String symbol){
+        super(name,turnValue,symbol,pollutionValue);
         this.speed = speed;
         this.alive = true;
         this.totalTurns = 0;
         this.score = 0;
     }
 
-    public int getTurns(){
-        return this.turnValue;
-    }
 
+    //Methods
     public double getScore(){
         return this.score;
-    }
-
-    public void addTurns(int gain){
-        this.turnValue += gain;
-    }
-
-    public void removeTurns(int loss){
-        this.turnValue -= loss;
     }
 
     public int getTotalTurns() {
@@ -38,11 +31,17 @@ public class Player extends GameObjects{
         this.totalTurns += i;
     }
     public void calculateScore(){
-        this.score = totalTurns * 10 - pollutionValue;
+        this.score = totalTurns * 10 - getPollutionValue();
     }
 
     public void triggerDeath(){
         this.alive = false;
+    }
+
+    //Checks if player is alive
+    public boolean status(){
+        boolean placeholder = this.alive;
+        return placeholder;
     }
 
     @Override
