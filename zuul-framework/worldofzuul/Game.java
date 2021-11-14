@@ -1,9 +1,9 @@
 package worldofzuul;
 
 import java.util.ArrayList;
+import java.util.Random;
 
-public class Game
-{
+public class Game {
     //Attributes
     private Parser parser;
     private Room currentRoom;
@@ -15,8 +15,8 @@ public class Game
     }
 
     //Main method
-    public static void main(String[] args){
-        Game myGame = new Game ();
+    public static void main(String[] args) {
+        Game myGame = new Game();
         myGame.play();
 
     }
@@ -25,18 +25,18 @@ public class Game
     public void createRooms() {
         Room level1, level2, level3, level4, level5, level6;
 
-        level1 = new Room("at the first level",60);
-        level2 = new Room("now at level 2",140);
-        level3 = new Room("now at level 3",240);
-        level4 = new Room("now at level 4",340);
-        level5 = new Room("now at level 5",440);
-        level6 = new Room("now at the final level",580);
+        level1 = new Room("at the first level", 60);
+        level2 = new Room("now at level 2", 140);
+        level3 = new Room("now at level 3", 240);
+        level4 = new Room("now at level 4", 340);
+        level5 = new Room("now at level 5", 440);
+        level6 = new Room("now at the final level", 580);
 
-        level1.setExit("next", level2);
-        level2.setExit("next", level3);
-        level3.setExit("next", level4);
-        level4.setExit("next", level5);
-        level5.setExit("next", level6);
+        level1.setExit("", level2);
+        level2.setExit("", level3);
+        level3.setExit("", level4);
+        level4.setExit("", level5);
+        level5.setExit("", level6);
 
         currentRoom = level1;
     }
@@ -49,28 +49,33 @@ public class Game
 
         //Boolean finished set to false, game runs while finished is not true
         boolean finished = false;
-        while (! finished) {
+        while (!finished) {
 
-            //Asks for command
+            //Asks the player for a command
             Command command = parser.getCommand();
 
-            //Checks if command = finished or player is dead
-            finished = processCommand(command) || !currentRoom.getMap().findPlayer().status();
-            if(currentRoom.getMap().findPlayer().getTurns() == 0){
-                finished = true;
+            //runs the players command
+            finished = processCommand(command);
+
+            //the enemies move if the player does not intend to go to the next level
+            CommandWord commandWord = command.getCommandWord();
+            if (command.getCommandWord() != commandWord.NEXT) {
+                enemyTurn();
             }
 
-            //Runs game, if finished is false
-            if(!finished){
+            //checks if the player died that turn
+            if (currentRoom.getMap().findPlayer().getTurns() <= 0 || !currentRoom.getMap().findPlayer().status()) {
+                finished = true;
+            } else { //if the player did not die, prints the map and stats for next turn
                 currentRoom.getMap().printGrid();
-                System.out.println("Score: "+currentRoom.getMap().findPlayer().getScore()+
-                        "    Energy: "+currentRoom.getMap().findPlayer().getTurns()+
-                        "    Turns used: "+currentRoom.getMap().findPlayer().getTotalTurns());
+                System.out.println("Score: " + currentRoom.getMap().findPlayer().getScore() +
+                        "    Energy: " + currentRoom.getMap().findPlayer().getTurns() +
+                        "    Turns used: " + currentRoom.getMap().findPlayer().getTotalTurns());
 
                 //Checks if score is larger than or equal to scoreToNextLevel
-                if(currentRoom.getMap().findPlayer().getScore() >= currentRoom.scoreToNextLevel()){
+                if (currentRoom.getMap().findPlayer().getScore() >= currentRoom.scoreToNextLevel()) {
                     System.out.println("You have reached a high enough score to go to the next level!");
-                    System.out.println("Type 'go next' to go to the next level! \nHowever you don't have to.");
+                    System.out.println("Type 'next' to go to the next level! \nHowever you don't have to.");
                 }
             }
         }
@@ -89,9 +94,9 @@ public class Game
 
         currentRoom.getMap().printGrid();
         currentRoom.getMap().findPlayer().calculateScore();
-        System.out.println("Score: "+currentRoom.getMap().findPlayer().getScore()+
-                "    Energy: "+currentRoom.getMap().findPlayer().getTurns()+
-                "    Turns used: "+currentRoom.getMap().findPlayer().getTotalTurns());
+        System.out.println("Score: " + currentRoom.getMap().findPlayer().getScore() +
+                "    Energy: " + currentRoom.getMap().findPlayer().getTurns() +
+                "    Turns used: " + currentRoom.getMap().findPlayer().getTotalTurns());
 
     }
 
@@ -102,26 +107,25 @@ public class Game
 
         CommandWord commandWord = command.getCommandWord();
 
-        if(commandWord == CommandWord.UNKNOWN) {
+        if (commandWord == CommandWord.UNKNOWN) {
             System.out.println("I don't know what you mean...");
             return false;
         }
 
         if (commandWord == CommandWord.HELP) {
             printHelp();
-        }
-        else if (commandWord == CommandWord.GO && command.getSecondWord().equals("next")) {
-            if(currentRoom.getMap().findPlayer().getScore() >= currentRoom.scoreToNextLevel()){
+        } else if (commandWord == commandWord.GO) {
+            goInGrid(command);
+        } else if (commandWord == CommandWord.QUIT) {
+            wantToQuit = quit(command);
+        } else if (commandWord == commandWord.NEXT) {
+            if (currentRoom.getMap().findPlayer().getScore() >= currentRoom.scoreToNextLevel()) {
                 goRoom(command);
-            } else{
+            } else {
                 System.out.println("You cannot go to the next level right now, try getting a some more score.");
             }
-        }else if(commandWord == commandWord.GO){
-            goInGrid(command);
         }
-        else if (commandWord == CommandWord.QUIT) {
-            wantToQuit = quit(command);
-        }
+
 
         return wantToQuit;
     }
@@ -143,7 +147,7 @@ public class Game
     private void goInGrid(Command command) {
 
         //Checks if player forgot to write second word wth go command
-        if(!command.hasSecondWord()) {
+        if (!command.hasSecondWord()) {
             System.out.println("Go where?");
             return;
         }
@@ -162,10 +166,8 @@ public class Game
         //Makes placeholder of current grid
         Grid placeholder = currentRoom.getMap();
 
-        String direction = command.getSecondWord();
-
         //Switches room
-        currentRoom = currentRoom.getExit(direction);
+        currentRoom = currentRoom.getExit("");
         System.out.println(currentRoom.getLongDescription());
 
         //Makes player from placholder grid, equal to player from new grid
@@ -174,15 +176,80 @@ public class Game
 
 
     //Sets quit to true, unless player wrote secondword with quit
-    private boolean quit(Command command) 
-    {
-        if(command.hasSecondWord()) {
+    private boolean quit(Command command) {
+        if (command.hasSecondWord()) {
             System.out.println("Quit what?");
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
 
+    //method that makes all enemies move
+    public void enemyTurn() {
+        //finds all enemies
+        ArrayList<Enemies> enemies = currentRoom.getMap().getAllEnemies();
+        int tries = 0;
+
+        //loops though the list making each move
+        for (int i = 0; i < enemies.size(); ) {
+            try {//tries moving
+                currentRoom.getMap().gridMovement(enemies.get(i), enemyAI(enemies.get(i)));
+                i++;
+            } catch (IllegalMoveException ex) {// if that fails it tries again but only limited times
+                tries++;
+            } finally { //controls if the one enemy has tried to many times
+                if (tries > 9) {
+                    i++;
+                    tries = 0;
+                }
+            }
+        }
+    }
+
+    private Command enemyAI(Enemies enemy) {
+        Random choiceMaker = new Random();
+        //finds the players position
+        ArrayList<Integer> playerPosition = currentRoom.getMap().getPosition(currentRoom.getMap().findPlayer());
+        //used to create a command
+        CommandWords commands = new CommandWords();
+        Command enemyMove = null;
+        int move = 0;
+
+        //gets the position of the enemy
+        ArrayList<Integer> enemyPosition = currentRoom.getMap().getPosition(enemy);
+
+        //2 variables sh
+        int moveableX = playerPosition.get(0) - enemyPosition.get(0);
+        int moveableY = playerPosition.get(1) - enemyPosition.get(1);
+        if (choiceMaker.nextBoolean()) {// 50/50 chance to make a good move or random
+            if (moveableY != 0) { //moves enemy on the y-axis if it's not equal to players y-value
+                if (moveableY > 0) {
+                    move = 0;
+                } else {
+                    move = 1;
+                }
+            } else if (moveableX != 0) {//moves enemy on the x-axis if it's not equal to players x-value
+                if (moveableX > 0) {
+                    move = 2;
+                } else {
+                    move = 3;
+                }
+            } else { // moves randomly
+                move = choiceMaker.nextInt(3);
+            }
+        }
+        //creates the command
+        switch (move) {
+            case 0:
+                enemyMove = new Command(commands.getCommandWord("go"), "down");
+            case 1:
+                enemyMove = new Command(commands.getCommandWord("go"), "up");
+            case 2:
+                enemyMove = new Command(commands.getCommandWord("go"), "right");
+            case 3:
+                enemyMove = new Command(commands.getCommandWord("go"), "left");
+        }
+        return enemyMove;
+    }
 }

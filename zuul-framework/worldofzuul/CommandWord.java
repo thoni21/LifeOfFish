@@ -4,7 +4,8 @@ public enum CommandWord
 {
 
     //Creates keywords
-    GO("go"), QUIT("quit"), HELP("help"), UNKNOWN("?");
+    GO("go"), QUIT("quit"), HELP("help"), UNKNOWN("?"),
+    NEXT("next");
     
     private String commandString;
     

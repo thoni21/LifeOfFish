@@ -1,7 +1,5 @@
 package worldofzuul;
 
-import com.sun.management.GarbageCollectionNotificationInfo;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -138,6 +136,22 @@ public class Grid {
         return (Player) this.grid[position.get(0)][position.get(1)];
     }
 
+    //Method that finds all Enemies and returns them in an Arraylist
+    public ArrayList<Enemies> getAllEnemies(){
+        //crates the arraylist
+        ArrayList<Enemies> enemies = new ArrayList<>();
+
+        //loops through the grid, looking for enemies
+        for (int column = 0; column < this.grid.length; column++) {
+            for (int row = 0; row < this.grid[column].length; row++) {
+                if (this.grid[row][column] instanceof Enemies) {
+                    enemies.add((Enemies) this.grid[row][column]);
+                }
+            }
+        }
+        return enemies;
+    }
+
     //Movement in grid
     public void gridMovement(GameObjects entity, Command direction) throws IllegalMoveException {
 
@@ -185,6 +199,7 @@ public class Grid {
                 System.out.println("You ate a " + placeholder.getName() + ".");
                 System.out.println("For this action you have gained some energy.");
                 System.out.println("...and maybe something more.");
+
             } else if (placeholder instanceof Obstacles) { //checks if the player collided with an obstacle
                 ((Player) entity).addTurns(placeholder.getTurnValue());
                 ((Player) entity).addPollutionValue(placeholder.getPollutionValue());
@@ -198,9 +213,6 @@ public class Grid {
                     System.out.println("For this action you will lose some energy.");
                     System.out.println("...and maybe something more.");
                 }
-
-
-
             } else if (placeholder instanceof Water) { //checks if the player collided with some water
                 ((Player) entity).addPollutionValue(placeholder.getPollutionValue());
 
@@ -226,15 +238,18 @@ public class Grid {
                 ((Player) entity).triggerDeath();
 
                 System.out.print("Too bad.");
-                System.out.println("You have confronted a " + placeholder.getName() + ".");
+                System.out.println("an " + placeholder.getName() + " has caught you.");
                 System.out.println("This action have resulted in your death.");
+            } else if(placeholder instanceof Enemies){//checks if the enemy collided with another enemy
+                this.grid[entityPosition.get(0)][entityPosition.get(1)] = placeholder;
+
             }
         }
 
         findPlayer().calculateScore();
     }
 
-    //Player move to next level
+    //Moves player to next level
     public void movePlayerToNextLevel(Grid grid){
 
         //list that's going to get returned
