@@ -3,8 +3,8 @@ package worldofzuul;
 public class Obstacles extends GameObjects{
 
     //Constructor
-    public Obstacles(String name, int turnValue, double pollutionValue, String symbol) {
-        super(name, turnValue, symbol, pollutionValue);
+    public Obstacles() {
+        super("plastic bottle", -5, "\uD83D\uDDD1", 20);
     }
 
     //Methods

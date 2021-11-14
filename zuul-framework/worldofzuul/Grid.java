@@ -2,6 +2,7 @@ package worldofzuul;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 public class Grid {
 
@@ -39,23 +40,23 @@ public class Grid {
         GameObjects[] objectList = new GameObjects[totalQuantity];
 
         //creating the player
-        objectList[placeCounter] = new Player("Tuna", 10, 1, 0.0, "\uD83D\uDC1F");
+        objectList[placeCounter] = new Player();
         placeCounter++;
 
 
         //loop that creates enemies and places them in the array
         for (int i = 0; i < enemiesQuantity; i++) {
-            objectList[placeCounter] = new Enemies("Octopus", -1000, 1, "\uD83D\uDC19");
+            objectList[placeCounter] = new Enemies();
             placeCounter++;
         }
         //loop that creates food and places them in the array
         for (int i = 0; i < foodQuantity; i++) {
-            objectList[placeCounter] = new Food("Crab", 6, 3, "\uD83E\uDD90");
+            objectList[placeCounter] = new Food();
             placeCounter++;
         }
         //loop that creates obstacles and places them in the array
         for (int i = 0; i < obstaclesQuantity; i++) {
-            objectList[placeCounter] = new Obstacles("hard plastic", -5, 20, "\uD83D\uDDD1");
+            objectList[placeCounter] = new Obstacles();
             placeCounter++;
         }
 
@@ -187,8 +188,10 @@ public class Grid {
         //places water where original the entity was
         this.grid[entityPosition.get(0)][entityPosition.get(1)] = new Water();
 
-        findPlayer().addTotalTurns(1);
-        findPlayer().removeTurns(1);
+        if(entity instanceof Player){
+            findPlayer().addTotalTurns(1);
+            findPlayer().removeTurns(1);
+        }
 
         //checks if the entity is the player
         if (entity instanceof Player) {
@@ -272,5 +275,70 @@ public class Grid {
 
     public GameObjects[][] getGrid() {
         return grid;
+    }
+
+    //method that checks if the map needs to refill some elements
+    public void maintenance(){
+
+        int foodCount = 0;
+        int obstacleCount = 0;
+
+        //checks how much food there is on the map
+        for (int column = 0; column < this.column; column++) {
+            for (int row = 0; row < this.grid[column].length; row++) {
+                if (this.grid[row][column] instanceof Food) {
+                    foodCount++;
+                }
+            }
+        }
+
+        //checks how much food there is on the map
+        for (int column = 0; column < this.column; column++) {
+            for (int row = 0; row < this.grid[column].length; row++) {
+                if (this.grid[row][column] instanceof Obstacles) {
+                    obstacleCount++;
+                }
+            }
+        }
+
+        //loop that sends new food objects in on the map with the method maintenanceAdder
+        for(int i = 0; i < this.foodQuantity - foodCount; i++){
+            maintenanceAdder(new Food());
+        }
+
+        //loop that sends new obstacle objects in on the map with the method maintenanceAdder
+        for(int i = 0; i < this.obstaclesQuantity - obstacleCount; i++){
+            maintenanceAdder(new Obstacles());
+        }
+    }
+
+    private void maintenanceAdder(GameObjects object){
+        Random random = new Random();
+
+        //counts how many tiles is water
+        int waterCount = 0;
+        for (int column = 0; column < this.column; column++) {
+            for (int row = 0; row < this.grid[column].length; row++) {
+                if (this.grid[row][column] instanceof Water) {
+                    waterCount++;
+                }
+            }
+        }
+
+        //finds a random number between o and how much water there is
+        int count = random.nextInt(waterCount);
+        int placement = 0;
+
+        //loops though the grid while counting up to the random number where there is water them placing set object there
+        for (int column = 0; column < this.column; column++) {
+            for (int row = 0; row < this.grid[column].length; row++) {
+                if (this.grid[row][column] instanceof Water) {
+                    placement++;
+                    if(count == placement){
+                        this.grid[row][column] = object;
+                    }
+                }
+            }
+        }
     }
 }

@@ -9,8 +9,8 @@ public class Player extends GameObjects{
     private int totalTurns;
 
     //Constructor
-    public Player(String name, int turnValue, int speed, double pollutionValue, String symbol){
-        super(name,turnValue,symbol,pollutionValue);
+    public Player(){
+        super("Tuna",10,"\uD83D\uDC1F",0.0);
         this.speed = speed;
         this.alive = true;
         this.totalTurns = 0;

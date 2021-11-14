@@ -66,7 +66,8 @@ public class Game {
             //checks if the player died that turn
             if (currentRoom.getMap().findPlayer().getTurns() <= 0 || !currentRoom.getMap().findPlayer().status()) {
                 finished = true;
-            } else { //if the player did not die, prints the map and stats for next turn
+            } else { //if the player did not die, then it updates and prints the map and stats for next turn
+                currentRoom.getMap().maintenance();
                 currentRoom.getMap().printGrid();
                 System.out.println("Score: " + currentRoom.getMap().findPlayer().getScore() +
                         "    Energy: " + currentRoom.getMap().findPlayer().getTurns() +
@@ -243,12 +244,16 @@ public class Game {
         switch (move) {
             case 0:
                 enemyMove = new Command(commands.getCommandWord("go"), "down");
+                break;
             case 1:
                 enemyMove = new Command(commands.getCommandWord("go"), "up");
+                break;
             case 2:
                 enemyMove = new Command(commands.getCommandWord("go"), "right");
+                break;
             case 3:
                 enemyMove = new Command(commands.getCommandWord("go"), "left");
+                break;
         }
         return enemyMove;
     }

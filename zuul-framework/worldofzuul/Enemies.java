@@ -6,8 +6,8 @@ public class Enemies extends GameObjects{
     private int speed;
 
     //Constructor
-    public Enemies(String name, int turnValue, int speed, String symbol){
-        super(name, turnValue, symbol, 0);
+    public Enemies(){
+        super("Octopus", -1000,"\uD83D\uDC19", 0);
         this.speed = speed;
     }
 

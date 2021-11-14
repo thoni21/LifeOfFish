@@ -3,8 +3,8 @@ package worldofzuul;
 public class Food extends GameObjects{
 
     //Constructor
-    public Food(String name, int turnValue, double pollutionValue, String symbol) {
-        super(name, turnValue, symbol, pollutionValue);
+    public Food() {
+        super("Shrimp", 6, "\uD83E\uDD90", 3);
     }
 
     //Methods
